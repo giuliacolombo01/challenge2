@@ -9,6 +9,8 @@
 #include <map>
 #include <array>
 #include <vector>
+#include <fstream>
+#include <cstdio>
 #include "mmio.h"
 
 namespace algebra {
@@ -31,10 +33,22 @@ namespace algebra {
 
         void resize (std::size_t n_r, std::size_t n_c) {
 
-            n_rows = n_r;
-            n_cols = n_c;
-
-            inner.resize(n_rows);  //la ridimensiono ma che elementi aggiungo?
+            if (compressed == 0) {
+                if (n_r >= n_rows && n_c >= n_cols) {
+                    n_rows = n_r;
+                    n_cols = n_c;
+                } else {
+                    n_rows = n_r;
+                    n_cols = n_c;
+                    for (const auto& element : data) {
+                        if (element.first[0] >= n_rows || element.first >= n_cols) {
+                            data.remove(element.first);
+                        }
+                    }
+                }
+            } else {
+                std::cerr << "Matrix compressed!" << std::endl;
+            }
         }
 
         const T operator() (std::size_t row, std::size_t col) {
@@ -81,13 +95,21 @@ namespace algebra {
         }
 
         void operator() (std::size_t row, std::size_t col, T value) {
+
+            if (row >= n_rows || col >= n_cols) {
+                std::cerr << "Indexes out of range!" << std::endl;
+                return;
+            }
+
             if constexpr (StorageOrder == typeOrder::rowWise) {
                 if (compressed == 0) {
                     if (data.find({row, col}) == data.cend()) {
                         data[{row, col}] = value;
                         return;
                     } else {
-                        std::cerr << "Element already present!" << std::endl;  //se c'è già cambia valore o lascia così?
+                        std::cout << "Element already present, this changes its value" << std::endl;
+                        data[{row, col}] = value;
+                        return;
                     }
                 } else {
                     std::size_t i = inner[row];
@@ -106,10 +128,12 @@ namespace algebra {
             } else if constexpr (StorageOrder == typeOrder::columnWise) {
                 if (compressed == 0) {
                     if (data.find({col, row}) == data.cend()) {
-                        data[{row, col}] = value;
+                        data[{col, row}] = value;
                         return;
                     } else {
-                        std::cerr << "Element already present!" << std::endl;  //se c'è già cambia valore o lascia così?
+                        std::cout << "Element already present, this changes its value" << std::endl;
+                        data[{col, row}] = value;
+                        return;
                     }
                 } else {
                     std::size_t i = inner[col];
@@ -262,8 +286,8 @@ namespace algebra {
 
         MM_typecode matcode;
         std::ifstream infile(filename);
-        int M, N, nz;
-        std::vector<std::size_t> I, J;
+        std::size_t n_rows, n_cols, nz;
+        std::vector<std::size_t> idx_rows, idx_cols;
         std::vector<T> val;
 
         if (mm_read_banner(&infile, &matcode) != 0) {
@@ -274,21 +298,21 @@ namespace algebra {
             throw std::runtime_error("Sorry, this function does not support Matrix Market type: " + std::string(mm_typecode_to_str(matcode)));
         }
 
-        if ((mm_read_mtx_crd_size(&infile, &M, &N, &nz)) != 0) {
+        if ((mm_read_mtx_crd_size(&infile, &n_rows, &n_cols, &nz)) != 0) {
             throw std::runtime_error("Error reading matrix size.");
         }
 
-        I.resize(nz);
-        J.resize(nz);
+        idx_rows.resize(nz);
+        idx_cols.resize(nz);
         val.resize(nz);
 
-        Matrix<T, StorageOrder> matrix(M, N);
+        Matrix<T, StorageOrder> matrix(n_rows, n_cols);
 
         for (std::size_t i = 0; i < nz; i++) {
-            infile >> I[i] >> J[i] >> val[i];
-            I[i]--;
-            J[i]--;
-            matrix.operator()(I[i], J[i]) = val[i];
+            infile >> idx_rows[i] >> idx_cols[i] >> val[i];
+            idx_rows[i]--;
+            idx_cols[i]--;
+            matrix.operator()(idx_rows[i], idx_cols[i], val[i]);
         }
 
         if (infile.is_open()) {
