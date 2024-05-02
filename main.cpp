@@ -24,7 +24,7 @@ int main() {
     for (std::size_t i = 0; i < result.size(); ++i) {
         std::cout << result[i] << " ";
     }
-    std::cout << "]" << std::endl;
+    std::cout << "]^T" << std::endl;
 
     matrix.compress();
     result = matrix * vector;
@@ -35,7 +35,7 @@ int main() {
     for (std::size_t i = 0; i < result.size(); ++i) {
         std::cout << result[i] << " ";
     }
-    std::cout << "]" << std::endl;
+    std::cout << "]^T" << std::endl;
 
     return 0;
 }

@@ -326,14 +326,11 @@ namespace algebra {
             return;
         }
 
-        /*while (getline(infile, s)) {
+        while (getline(infile, s)) {
             if (s[0] != '%') {
                 break;
             }
-        }*/
-
-        //Go to the second line
-        getline(infile, s);
+        }
 
         std::istringstream ss(s);
         ss >> n_rows >> n_cols >> nz;
@@ -343,7 +340,9 @@ namespace algebra {
         T v;
 
         for (std::size_t i = 0; i < nz; i++) {
-            ss >> r >> c >> v;
+            getline(infile, s);
+            std::istringstream sss(s);
+            sss >> r >> c >> v;
             data[{r, c}] = v;
         }
 
