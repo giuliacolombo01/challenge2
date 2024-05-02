@@ -17,12 +17,24 @@ int main() {
 
     time.start();
     std::vector<double> result = matrix * vector;
-    std::cout << "Elapsed time " << time.wallTimeNow() << " microseconds" << std::endl;
+    std::cout << "Elapsed time for uncompressed matrix" << time.wallTimeNow() << " microseconds" << std::endl;
+
+    std::cout << "The result is: [";
+    for (std::size_t i = 0; i < result.size(); ++i) {
+        std::cout << result[i] << " ";
+    }
+    std::cout << "]" << std::endl;
 
     matrix.compress();
     result = matrix * vector;
     time.stop();
-    std::cout << time;
+    std::cout << "Elapsed time for compressed matrix" << time << " microseconds" << std::endl;
+
+    std::cout << "The result is: [";
+    for (std::size_t i = 0; i < result.size(); ++i) {
+        std::cout << result[i] << " ";
+    }
+    std::cout << "]" << std::endl;
 
     return 0;
 }
