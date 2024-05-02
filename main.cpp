@@ -1,4 +1,5 @@
 #include "Matrix.h"
+#include "Matrix_more.h"
 #include "chrono.h"
 
 #include <iostream>

@@ -5,8 +5,6 @@
 #ifndef CHALLENGE2_MATRIX_H
 #define CHALLENGE2_MATRIX_H
 
-#include "mmio.h"
-
 #include <map>
 #include <array>
 #include <vector>
@@ -56,8 +54,6 @@ namespace algebra {
 
         template <typename t, typeOrder so>
         friend std::vector<t> operator* (const Matrix<t, so>& M, const std::vector<t>& v);
-
-        //Matrix<T, StorageOrder> read (const std::string& filename);
 
         void read (const std::string& filename);
     };

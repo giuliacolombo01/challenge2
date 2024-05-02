@@ -53,7 +53,7 @@ namespace algebra {
         if constexpr (StorageOrder == typeOrder::rowWise) {
             if (compressed == 0) {
                 if (data.find({row, col}) != data.cend()) {
-                    return data[{row, col}];
+                    return data.at({row, col});;
                 } else if (row >= n_rows || col >= n_cols) {
                     std::cerr << "Indexes out of range!" << std::endl;
                 }
@@ -69,7 +69,7 @@ namespace algebra {
         } else if constexpr (StorageOrder == typeOrder::columnWise) {
             if (compressed == 0) {
                 if (data.find({col, row}) != data.cend()) {
-                    return data[{col, row}];
+                    return data.at({col, row});;
                 } else if (row >= n_rows || col >= n_cols) {
                     std::cerr << "Indexes out of range!" << std::endl;
                 }
@@ -102,7 +102,6 @@ namespace algebra {
 
         if (row >= n_rows || col >= n_cols) {
             std::cerr << "Indexes out of range!" << std::endl;
-            exit(1);
         }
 
         if constexpr (StorageOrder == typeOrder::rowWise) {
@@ -149,8 +148,9 @@ namespace algebra {
             }
         } else {
             std::cerr << "Type of ordering not recognised!" << std::endl;
-            exit(1);
         }
+
+        return data.end()->second;
     }
 
     /*!
@@ -344,7 +344,7 @@ namespace algebra {
 
         for (std::size_t i = 0; i < nz; i++) {
             ss >> r >> c >> v;
-            operator()(r, c, v);
+            data[{r, c}] = v;
         }
 
         infile.close();
