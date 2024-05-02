@@ -8,7 +8,8 @@ using namespace Timings;
 
 int main() {
 
-    Matrix<double, typeOrder::rowWise> matrix = read<double, typeOrder::rowWise>("lnsp_131.mtx");
+    Matrix<double, typeOrder::rowWise> matrix(0, 0);
+    matrix.read("lnsp_131.mtx");
     std::vector<double> vector(131, 0.);
     vector[0] = 1.;
 

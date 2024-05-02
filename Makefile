@@ -1,7 +1,7 @@
 CC = /u/sw/toolchains/gcc-glibc/11.2.0/prefix/bin/g++
 CFLAGS = -I. -Ishared-folder/try -Wall -Werror
 
-SRCS = main.cpp mmio.h Matrix.h chrono.h
+SRCS = main.cpp Matrix.h Matrix_more.h chrono.h
 OBJS = $(SRCS:.cpp=.o)
 
 all: main
