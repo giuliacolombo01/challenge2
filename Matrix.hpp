@@ -30,11 +30,11 @@ namespace algebra {
     private:
         std::size_t n_rows = 0;
         std::size_t n_cols = 0;
-        std::size_t nz = 0;
+        std::size_t nz;
         std::map<std::array<std::size_t, 2>, T> data;
-        std::vector<std::size_t> inner;
-        std::vector<std::size_t> outer;
-        std::vector<T> values;
+        std::vector<std::size_t> inner(0, 0);
+        std::vector<std::size_t> outer(0, 0);
+        std::vector<T> values(0, 0);
         bool compressed = false;
 
     public:
