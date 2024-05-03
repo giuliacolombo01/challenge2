@@ -1,6 +1,6 @@
-#include "Matrix.h"
-#include "Matrix_more.h"
-#include "chrono.h"
+#include "Matrix.hpp"
+#include "Matrix_more.hpp"
+#include "chrono.hpp"
 
 #include <iostream>
 
