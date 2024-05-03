@@ -29,6 +29,7 @@ namespace algebra {
                 for (const auto& element : data) {
                     if (element.first[0] >= n_rows || element.first[1] >= n_cols) {
                         data.erase(element.first);
+                        --nz;
                     }
                 }
             }
@@ -52,6 +53,7 @@ namespace algebra {
 
         if (row >= n_rows || col >= n_cols) {
             std::cerr << "Indexes out of range!" << std::endl;
+            return value;
         }
 
         if constexpr (StorageOrder == typeOrder::rowWise) {
@@ -102,11 +104,13 @@ namespace algebra {
 
         if (row >= n_rows || col >= n_cols) {
             std::cerr << "Indexes out of range!" << std::endl;
+            return data.end()->second;
         }
 
         if constexpr (StorageOrder == typeOrder::rowWise) {
             if (compressed == 0) {
                 if (data.find({row, col}) == data.cend()) {
+                    ++nz;
                     return data[{row, col}];
                 } else {
                     std::cout << "Element already present, this changes its value" << std::endl;
@@ -128,6 +132,7 @@ namespace algebra {
         } else if constexpr (StorageOrder == typeOrder::columnWise) {
             if (compressed == 0) {
                 if (data.find({col, row}) == data.cend()) {
+                    ++nz;
                     return data[{col, row}];
                 } else {
                     std::cout << "Element already present, this changes its value" << std::endl;
@@ -262,7 +267,7 @@ namespace algebra {
     template <typename T, typeOrder StorageOrder>
     std::vector<T> operator* (const Matrix<T, StorageOrder>& M, const std::vector<T>& v) {
 
-        std::vector<T> result(v.size(), 0);
+        std::vector<T> result(M.n_rows, 0);
 
         if constexpr (StorageOrder == typeOrder::rowWise) {
             if (M.compressed == 0) {
@@ -270,9 +275,9 @@ namespace algebra {
                     result[element.first[0]] += element.second * v[element.first[1]];
                 }
             } else {
-                for (std::size_t i = 0; i < v.size(); ++i) {
-                    for (std::size_t j = 0; j < M.n_cols; ++j) {
-                        result[i] += M(i, j) * v[j];
+                for (std::size_t i = 0; i < M.n_rows; ++i) {
+                    for (std::size_t j = M.inner[i]; j < M.inner[i + 1]; ++j) {
+                        result[i] += M.values[j] * v[M.outer[j]];
                     }
                 }
             }
@@ -282,9 +287,13 @@ namespace algebra {
                     result[element.first[1]] += element.second * v[element.first[0]];
                 }
             } else {
-                for (std::size_t i = 0; i < v.size(); ++i) {
+                for (std::size_t i = 0; i < M.n_rows; ++i) {
                     for (std::size_t j = 0; j < M.n_cols; ++j) {
-                        result[i] += M(i, j) * v[j];
+                        for (std::size_t k = M.inner[j]; k < M.inner[j + 1]; ++k) {
+                            if (k == i) {
+                                result[i] += M.values[k] * v[j];
+                            }
+                        }
                     }
                 }
             }
@@ -335,10 +344,10 @@ namespace algebra {
             ss >> n_rows >> n_cols >> nz;
 
             for (std::size_t i = 0; i < nz; i++) {
-                 getline(infile, s);
+                getline(infile, s);
                 std::istringstream sss(s);
                 sss >> r >> c >> v;
-                data[{r, c}] = v;
+                data[{r - 1, c - 1}] = v;  //-1 perche sono numerati da 0 mentre nel file sono da 1
             }
         } else if constexpr (StorageOrder == typeOrder::columnWise) {
             
@@ -349,7 +358,7 @@ namespace algebra {
                  getline(infile, s);
                 std::istringstream sss(s);
                 sss >> c >> r >> v;
-                data[{c, r}] = v;
+                data[{c - 1, r - 1}] = v;
             }
         } else {
             std::cerr << "Type of ordering not recognised!" << std::endl;
