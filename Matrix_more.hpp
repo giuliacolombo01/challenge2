@@ -50,12 +50,14 @@ namespace algebra {
 
         T value = 0;
 
+        if (row >= n_rows || col >= n_cols) {
+            std::cerr << "Indexes out of range!" << std::endl;
+        }
+
         if constexpr (StorageOrder == typeOrder::rowWise) {
             if (compressed == 0) {
                 if (data.find({row, col}) != data.cend()) {
                     return data.at({row, col});;
-                } else if (row >= n_rows || col >= n_cols) {
-                    std::cerr << "Indexes out of range!" << std::endl;
                 }
             } else {
                 std::size_t i = inner[row];
@@ -70,8 +72,6 @@ namespace algebra {
             if (compressed == 0) {
                 if (data.find({col, row}) != data.cend()) {
                     return data.at({col, row});;
-                } else if (row >= n_rows || col >= n_cols) {
-                    std::cerr << "Indexes out of range!" << std::endl;
                 }
             } else {
                 std::size_t i = inner[col];
@@ -170,28 +170,32 @@ namespace algebra {
 
         if constexpr (StorageOrder == typeOrder::rowWise) {
             inner.resize(n_rows + 1, 0);
+            outer.resize(nz, 0);
+            values.resize(nz, 0);
             std::size_t first = 0;
 
             for (std::size_t i = 0; i < inner.size(); ++i) { 
                 inner[i] = first;
                 for (std::size_t j = 0; j < n_cols; ++j) {
                     if (data.find({i, j}) != data.cend()) {
-                        outer.push_back(j);
-                        values.push_back(data[{i, j}]);
+                        outer[first] = j;
+                        values[first] = data[{i, j}];
                         ++first;
                     }
                 }
             }
         } else if constexpr (StorageOrder == typeOrder::columnWise) {
             inner.resize(n_cols + 1, 0);
+            outer.resize(nz, 0);
+            values.resize(nz, 0);
             std::size_t first = 0;
 
             for (std::size_t i = 0; i < inner.size(); ++i) {
                 inner[i] = first;
                 for (std::size_t j = 0; j < n_rows; ++j) {
                     if (data.find({i, j}) != data.cend()) {
-                        outer.push_back(j);
-                        values.push_back(data[{i, j}]);
+                        outer[first] = j;
+                        values[first] = data[{i, j}];
                         ++first;
                     }
                 }
