@@ -21,5 +21,5 @@ Then there is a function which compresses the matrix,another one which decompres
 Then there's a friend function which computes the product between a matrix and a vector given as input, and at last there's one which takes as input a MatrixMarket file and creates a matrix of this class with its content.
 ## Example
 All the functions needed are contained into some .hpp files (one for the class, another one for the implementation of its functions and the last one for chrono's functions).
-Then there's a Makefile which has to be used to compile the code by using the command make.
+Then there's a Makefile which has to be used to compile the code by using the command make (or make doc for doxygen).
 By running the code with the command ./main it's possible to see an example with a 131x131 matrix of double from MatrixMarket: this matrix is used for fluid flow modelling.

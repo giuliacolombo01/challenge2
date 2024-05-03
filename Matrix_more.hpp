@@ -28,7 +28,7 @@ namespace algebra {
                 n_cols = n_c;
                 for (const auto& element : data) {
                     if (element.first[0] >= n_rows || element.first[1] >= n_cols) {
-                        data.remove(element.first);
+                        data.erase(element.first);
                     }
                 }
             }
@@ -267,7 +267,7 @@ namespace algebra {
         if constexpr (StorageOrder == typeOrder::rowWise) {
             if (M.compressed == 0) {
                 for (const auto& element : M.data) {
-                    result[element.first[0]] += element.second * element.first[1];
+                    result[element.first[0]] += element.second * v[element.first[1]];
                 }
             } else {
                 for (std::size_t i = 0; i < v.size(); ++i) {
@@ -279,7 +279,7 @@ namespace algebra {
         } else if constexpr (StorageOrder == typeOrder::columnWise) {
             if (M.compressed == 0) {
                 for (const auto& element : M.data) {
-                    result[element.first[1]] += element.second * element.first[0];
+                    result[element.first[1]] += element.second * v[element.first[0]];
                 }
             } else {
                 for (std::size_t i = 0; i < v.size(); ++i) {
@@ -325,20 +325,36 @@ namespace algebra {
             }
         }
 
-        std::istringstream ss(s);
-        ss >> n_rows >> n_cols >> nz;
-
         std::size_t r;
         std::size_t c;
         T v;
 
-        for (std::size_t i = 0; i < nz; i++) {
-            getline(infile, s);
-            std::istringstream sss(s);
-            sss >> r >> c >> v;
-            data[{r, c}] = v;
-        }
+        if constexpr (StorageOrder == typeOrder::rowWise) {
 
+            std::istringstream ss(s);
+            ss >> n_rows >> n_cols >> nz;
+
+            for (std::size_t i = 0; i < nz; i++) {
+                 getline(infile, s);
+                std::istringstream sss(s);
+                sss >> r >> c >> v;
+                data[{r, c}] = v;
+            }
+        } else if constexpr (StorageOrder == typeOrder::columnWise) {
+            
+            std::istringstream ss(s);
+            ss >> n_cols >> n_rows >> nz;
+
+            for (std::size_t i = 0; i < nz; i++) {
+                 getline(infile, s);
+                std::istringstream sss(s);
+                sss >> c >> r >> v;
+                data[{c, r}] = v;
+            }
+        } else {
+            std::cerr << "Type of ordering not recognised!" << std::endl;
+        }
+        
         infile.close();
     }
 

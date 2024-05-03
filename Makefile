@@ -1,5 +1,8 @@
-CC = /u/sw/toolchains/gcc-glibc/11.2.0/prefix/bin/g++
-CFLAGS = -I. -Ishared-folder/try -Wall -Werror
+CC = g++
+CXXFLAGS = -std=c++20
+CPPFLAGS = -Wall -03 -I include
+
+DOXYFILE = Doxyfile
 
 SRCS = main.cpp Matrix.hpp Matrix_more.hpp chrono.hpp
 OBJS = $(SRCS:.cpp=.o)
@@ -7,10 +10,13 @@ OBJS = $(SRCS:.cpp=.o)
 all: main
 
 main: $(OBJS)
-	$(CXX) $(CFLAGS) $(OBJS) -o $@
+	$(CXX) $(CXXFLAGS) $(OBJS) -o $@
 
 %.o: %.cpp
-	$(CXX) $(CFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
 	rm *.o main
+
+doc:
+	doxygen $(DOXYFILE)
