@@ -44,6 +44,13 @@ int main() {
 
     std::cout << std::endl;
 
+    //Compute the three norms
+    std::cout << "1-norm of the matrix is: " << matrix.norm<typeNorm::one>() << std::endl;
+    std::cout << "Infinity norm of the matrix is: " << matrix.norm<typeNorm::infinty>() << std::endl;
+    std::cout << "Frobenius norm of the matrix is: " << matrix.norm<typeNorm::frobenius>() << std::endl;
+
+    std::cout << std::endl;
+
     matrix.compress();
     result = matrix * vector;
     time.stop();

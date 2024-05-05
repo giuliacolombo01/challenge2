@@ -364,36 +364,18 @@ namespace algebra {
         std::size_t c;
         T v;
 
-        if constexpr (StorageOrder == typeOrder::rowWise) {
+        std::istringstream ss(s);
+        //Extract the number of rows and columns from the file
+        ss >> n_rows >> n_cols >> nz;
 
-            std::istringstream ss(s);
-            //Extract the number of rows and columns from the file
-            ss >> n_rows >> n_cols >> nz;
-
-            for (std::size_t i = 0; i < nz; i++) {
-                getline(infile, s);
-                std::istringstream sss(s);
-                //Extract the values from the file
-                sss >> r >> c >> v;
-                data[{r - 1, c - 1}] = v;  //-1 to scale the indexes of the file (they start from 1, not 0)
-            }
-        } else if constexpr (StorageOrder == typeOrder::columnWise) {
-            
-            std::istringstream ss(s);
-            //Extract the number of rows and columns from the file
-            ss >> n_cols >> n_rows >> nz;
-
-            for (std::size_t i = 0; i < nz; i++) {
-                 getline(infile, s);
-                std::istringstream sss(s);
-                //Extract the values from the file
-                sss >> c >> r >> v;
-                data[{c - 1, r - 1}] = v;  //-1 to scale the indexes of the file (they start from 1, not 0)
-            }
-        } else {
-            std::cerr << "Type of ordering not recognised!" << std::endl;
+        for (std::size_t i = 0; i < nz; i++) {
+            getline(infile, s);
+            std::istringstream sss(s);
+            //Extract the numbers from the file (row, column, value)
+            sss >> r >> c >> v;
+            data[{r - 1, c - 1}] = v;  //-1 to scale the indexes of the file (they start from 1, not 0)
         }
-        
+
         infile.close();
     }
 

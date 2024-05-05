@@ -28,4 +28,4 @@ At last there's a template function which evaluates the norm of the matrix, give
 ## Example
 All the functions needed are contained into some .hpp files (one for the class, another one for the implementation of its functions and the last one for chrono's functions).
 Then there's a Makefile which has to be used to compile the code by using the command make (or make doc for doxygen).
-By running the code with the command ./main it's possible to see an example with a 131x131 matrix of double from MatrixMarket: this matrix is used for fluid flow modelling. Pay attention that the indexes in this file starts from 1, so they have to be scaled to construct the sparse matrix.
+By running the code with the command ./main it's possible to see an example with a 131x131 matrix of double from MatrixMarket: this matrix is used for fluid flow modelling. On each line of this file, the first number given is the row of the element, the second is its column and the third is its value. Pay attention that the indexes in this file starts from 1, so they have to be scaled to construct the sparse matrix.
